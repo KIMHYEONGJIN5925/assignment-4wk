@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+      integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+      crossorigin="anonymous"
+    />
+
+    <!-- Font Awesome CSS -->
+    <link
+      href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.js"
+      integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
+      integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <script>
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const boardId = urlParams.get("boardId");
+
+      $(document).ready(function() {
+        get_detail()
+      });
+
+      function get_detail() {
+                $.ajax({
+                    type: "GET",
+                    url: `/api/board/${boardId}`, 
+                    data: {},
+                    error: function (xhr, status, error) {
+                        if (status == 404) {
+                            alert("존재하지 않는 글입니다.");
+                        }
+                        window.location.href = "/board";
+                    },
+                    success: function (response) {
+                        let boardDetail = response["detail"];
+                        $("#inputName").text(boardDetail["name"]);
+                        $("#inputDate").text(boardDetail["date"]);
+                        $("#inputTitle").text(boardDetail["title"]);
+                        $("#inputContent").text(boardDetail["content"]);
+                        
+                        sessionStorage.setItem("boardId", boardId);
+                        sessionStorage.setItem("inputName", boardDetail["name"]);
+                        sessionStorage.setItem("inputDate", boardDetail["date"]);
+                        sessionStorage.setItem("inputTitle", boardDetail["title"]);
+                        sessionStorage.setItem("inputContent", boardDetail["content"]);
+                    }
+                });
+              } 
+
+        function goRevise(boardDetail){
+            location.href="/revise?boardId=" + boardId
+        };
+
+
+    </script>
+    <title>게시판 상세 페이지</title>
+
+   
+<style>
+  body {
+      font-size:9pt;
+      color:rgb(46, 84, 190)
+  }
+  table {
+      width: 600px;
+      border-collapse: collapse;
+  }
+  th, td {
+      border: 1px solid coral;
+      padding : 5px;
+  }
+  input {
+      width: 200px;
+  }
+  textarea {
+      width: 90%;
+      height: 100px;
+  }
+  .button_div {
+      width:600px;
+      text-align: center;
+      margin-top: 10px;
+
+  }
+</style>
+</head>
+
+<body>
+  <form name = 'frm' method='post'>
+  <colgroup>
+      <col width = '30%'/>
+      <col width = '*'/>
+
+  </colgroup>
+  <div id = 'boardDetail'>
+    <table>
+
+        <tr>
+            <th>작성자</th>
+            <td id= 'inputName'></td>
+        </tr>
+        <tr>
+            <th>작성날짜</th>
+            <td id= 'inputDate'></td>
+        </tr>
+        <tr>
+            <th>제목</th>
+            <td id= 'inputTitle'></td>
+        </tr>
+        <tr>
+            <th>내용</th>
+            <td id = 'inputContent'></td>
+        </tr>
+    </table>
+  </div>
+  <div class = 'button_div'>
+      <button type='button' onclick = 'goRevise()'  > 수정하기 </button>
+      <button type='button' onclick = 'window.location.href="/home"'> 홈으로 돌아가기 </button>
+  </div>
+  </form>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Agency - Start Bootstrap Theme</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="static/assets/favicon.ico" />
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet" type="text/css">
+    <!-- Core theme CSS (includes Bootstrap)-->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    
+
+    <script>
+        // url에 있는 내용 가져옴
+        const query = window.location.search;
+        const urlParams = new URLSearchParams(query);
+        const boardId = urlParams.get("boardId");
+
+        $(document).ready(function () {
+            get_detail();
+        });
+
+
+        // 수정해야하는 글 불러옴
+        function get_detail() {
+            console.log('zz')
+            $.ajax({
+                type: "GET",
+                url: `/api/board/${boardId}`, // boards router의  /boards/:boardId 호출함
+                data: {},
+                error: function (xhr, status, error) {
+                    if (status == 404) {
+                        alert("존재하지 않는 글입니다.");
+                    }
+                    window.location.href = "/board"
+                },
+                success: function (response) {
+                    console.log(boardId)
+                    let boardDetail = response["detail"];
+
+                    //console.log(boardDetail)                  
+                    $("#inputDate").val(boardDetail["date"]);
+                    $("#inputTitle").val(boardDetail["title"]);
+                    $("#inputName").val(boardDetail["name"]);
+                    $("#inputContent").val(boardDetail["content"]);
+                    // $("#inputPass").val(boardDetail["pass"]);
+
+                    //sessionStorage.setItem("boardId", boardId);
+                    sessionStorage.setItem("inputTitle", boardDetail["title"]);
+                    sessionStorage.setItem("inputName", boardDetail["name"]);
+                    //sessionStorage.setItem("input-regDate", boardDetail["regDate"]);
+                    sessionStorage.setItem("inputContent", boardDetail["content"]);
+                    //sessionStorage.setItem("input-password", boardDetail["password"]);
+                }
+            });
+        }
+        // 수정완료 버튼 클릭 시 비번 체크
+        function updateCheck() {
+            $.ajax({
+                type: "GET",
+                url: `/api/board/${boardId}`,
+                data: {},
+                success: function (response) {
+                    console.log(boardId)
+                    let boardDetail = response["detail"];                     
+                    let pwd = boardDetail["pass"]; // 기존 비밀번호
+                    console.log('비번체크전')
+                    if (pwd === $("#inputPass").val()) { // 새로운 비밀번호와 일치 여부 확인
+                        console.log('비번같음')
+                        updateBoard()
+                    }
+                    else {
+                        console.log('비번다름')
+                        alert("비밀번호가 다릅니다.");
+                    }
+                }
+            });
+        }
+        // 비번 일치하면 게시글 수정 진행
+        function updateBoard() {
+            console.log('수정시작')
+
+            $.ajax({
+                type: "patch",
+                url: `/api/board/${boardId}/update`,
+                data: {
+                    name: $("#inputName").val(),
+                    pass: $("#inputPass").val(),
+                    title: $("#inputTitle").val(),
+                    content: $("#inputContent").val() 
+                },
+                success: function (response) {
+                    console.log('수정진행')
+                    if (response["result"] == "success") {
+                        alert("수정완료!");
+                        location.href = "/home"
+                    }
+                }
+            });
+        }
+        // 삭제하기 버튼 클릭 시 비번 일치 여부
+        function deleteCheck() {
+                $.ajax({
+                    type: "GET",
+                    url: `/api/board/${boardId}`,
+                    data: {},
+                    success: function (response) {
+                        let boardDetail = response["detail"];
+                        let pwd = boardDetail["pass"] // 기존 비밀번호
+                        if (pwd == $("#inputPass").val()) { // 새로운 비밀번호와 일치 여부 확인
+                            deleteBoard()
+                        }
+                        else {
+                            alert("비밀번호가 다릅니다.");
+                        }
+                    }
+                });
+            }
+        //비번 일치하면 게시글 삭제 진행
+        function deleteBoard() {
+                $.ajax({
+                    type: "DELETE",
+                    url: `/api/board/${boardId}/delete`,
+                    data: {},
+                    success: function (response) {
+                        if (response["result"] == "success") {
+                            alert("삭제 완료!");
+                            location.href = "/home"
+                        }
+                    }
+                });
+            }    
+        
+    </script>
+
+<style>
+    body {
+        font-size:9pt;
+        color:rgb(46, 84, 190)
+    }
+    table {
+        width: 600px;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid coral;
+        padding : 5px;
+    }
+    input {
+        width: 200px;
+    }
+    textarea {
+        width: 90%;
+        height: 100px;
+    }
+    .button_div {
+        width:600px;
+        text-align: center;
+        margin-top: 10px;
+
+    }
+</style>
+
+</head>
+<body>
+    <form name = 'frm' method='post'>
+    <colgroup>
+        <col width = '30%'/>
+        <col width = '*'/>
+
+    </colgroup>
+    <table>
+        <tr>
+            <th>작성자</th>
+            <td><input type='text' id='inputName' style="width:500px"></td>
+        </tr>
+        <tr>
+            <th>비밀번호</th>
+            <td><input type='password' id='inputPass' placeholder="수정,삭제시에는 전과 같은 비밀번호가 필요합니다." style="width:500px"></td>
+        </tr>
+        <tr>
+            <th>제목</th>
+            <td><input type='text' id='inputTitle' style="width:500px"></td>
+        </tr>
+        <tr>
+            <th>내용</th>
+            <td><textarea id='inputContent' style="width:500px"></textarea>>
+            </td>
+        </tr>
+    </table>
+    <div class = 'button_div'>
+        <button type='button' onclick='updateCheck()'> 수정완료 </button>
+        <button type='button' onclick ='deleteCheck()'> 글 삭제하기 </button>
+        <button type='button' onclick = 'location.href="/home"'> 홈으로 돌아가기 </button>
+    </div>
+    </form>
+</body>
+
+</html>
