@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -8,8 +7,8 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -23,155 +22,18 @@
       href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
       rel="stylesheet"
     />
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script
-      src="https://code.jquery.com/jquery-3.5.1.js"
-      integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
-      integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <link href="/mystyle.css" rel="stylesheet" />
 
-    <link href="/static/mystyle.css" rel="stylesheet" />
-    <script>
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      const goodsId = urlParams.get("goodsId");
-
-      $(document).ready(function() {
-        get_detail();
-        $("#numberSelect").on("change", function() {
-          let orderNum = parseInt($(this).val());
-          $("#orderNumber").html(
-            `<small class="mr-2 text-muted">총 수량 ${orderNum}개</small>${number2decimals(
-              orderNum * sessionStorage.getItem("goodsPrice")
-            )}`
-          );
-          sessionStorage.setItem("orderNum", orderNum);
-        });
-      });
-
-      function sign_out() {
-        $.removeCookie("mytoken", { path: "/" });
-        $.removeCookie("userName", { path: "/" });
-        window.location.href = "/";
-      }
-
-      function get_detail() {
-        let goods = [
-                {
-                    "_id": "600fa6e49539b288e3c5a2cf",
-                    "goodsId": 4,
-                    "name": "상품 4",
-                    "thumbnailUrl": "https://cdn.pixabay.com/photo/2016/09/07/02/11/frogs-1650657_1280.jpg",
-                    "category": "drink",
-                    "price": 0.1
-                },
-                {
-                    "_id": "600fa6e49539b288e3c5a2ce",
-                    "goodsId": 3,
-                    "name": "상품 3",
-                    "thumbnailUrl": "https://cdn.pixabay.com/photo/2016/09/07/02/12/frogs-1650658_1280.jpg",
-                    "category": "drink",
-                    "price": 2.2
-                },
-                {
-                    "_id": "600fa6e49539b288e3c5a2cd",
-                    "goodsId": 2,
-                    "name": "상품 2",
-                    "thumbnailUrl": "https://cdn.pixabay.com/photo/2014/08/26/19/19/wine-428316_1280.jpg",
-                    "category": "drink",
-                    "price": 0.11
-                },
-                {
-                    "_id": "600fa6e49539b288e3c5a2cc",
-                    "goodsId": 1,
-                    "name": "상품 1",
-                    "thumbnailUrl": "https://cdn.pixabay.com/photo/2016/09/07/19/54/wines-1652455_1280.jpg",
-                    "category": "drink",
-                    "price": 6.2
-                }
-            ]
-
-        let goodsDetail = goods.find((v) => v.goodsId == goodsId);
-        if (!goodsDetail) {
-            goodsDetail = goods[0]
-        }
-        
-        $("#goodsUrl").attr("src", goodsDetail["thumbnailUrl"]);
-        $("#goodsName").text(goodsDetail["name"]);
-        $("#goodsPrice").text("$" + number2decimals(goodsDetail["price"]));
-
-        sessionStorage.setItem("goodsId", goodsId);
-        sessionStorage.setItem("goodsName", goodsDetail["name"]);
-        sessionStorage.setItem("goodsPrice", goodsDetail["price"]);
-        sessionStorage.setItem("orderNum", 1);
-      }
-
-      function addCart() {
-        $.ajax({
-          type: "POST",
-          url: `/api/goods/${goodsId}/cart`,
-          data: {
-            quantity: sessionStorage.getItem("orderNum")
-          },
-          error: function(xhr, status, error) {
-            if (status == 400) {
-              alert("존재하지 않는 상품입니다.");
-            }
-            window.location.href = "/goods";
-          },
-          success: function(response) {
-            if (response["result"] == "success") {
-              $("#cartModal").modal("show");
-            }
-          }
-        });
-      }
-
-      function buyNow() {
-        sessionStorage.setItem(
-          "priceSum",
-          sessionStorage.getItem("goodsPrice")
-        );
-        sessionStorage.setItem(
-          "cart",
-          JSON.stringify([
-            {
-              goodsName: sessionStorage.getItem("goodsName"),
-              quantity: sessionStorage.getItem("orderNum")
-            }
-          ])
-        );
-        window.location.href = "/order";
-      }
-
-      function number2decimals(num) {
-        return (Math.round(num * 100) / 100).toFixed(2);
-      }
-    </script>
     <title>스파르타 쇼핑몰 | 상품 상세</title>
-
-    <style></style>
   </head>
 
   <body>
     <nav
       class="navbar navbar-expand-sm navbar-dark bg-sparta justify-content-end"
     >
-      <a class="navbar-brand" href="/goods">
+      <a class="navbar-brand" href="/goods.html">
         <img
-          src="/static/logo_big_tr.png"
+          src="/logo_big_tr.png"
           width="30"
           height="30"
           class="d-inline-block align-top"
@@ -197,7 +59,7 @@
       >
         <ul class="navbar-nav mr-auto text-right">
           <li class="nav-item" id="link-cart">
-            <a class="nav-link" href="/cart">
+            <a class="nav-link" href="/cart.html">
               장바구니<i
                 class="fa fa-shopping-cart ml-2"
                 aria-hidden="true"
@@ -229,9 +91,7 @@
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
-                  <div class="modal-body">
-                    로그아웃하시면 장바구니가 사라져요!
-                  </div>
+                  <div class="modal-body">정말로 로그아웃 하시겠습니까?</div>
                   <div class="modal-footer">
                     <button
                       type="button"
@@ -243,7 +103,7 @@
                     <button
                       type="button"
                       class="btn btn-sparta"
-                      onclick="sign_out()"
+                      onclick="signOut()"
                     >
                       로그아웃하기
                     </button>
@@ -291,12 +151,15 @@
                 <small class="mr-2 text-muted">총 수량 1개</small>$6.20
               </div>
             </div>
+            <div class="row mb-3">
+              <small class="col-12 text-right" id="pageViewerCount"></small>
+            </div>
             <div class="row d-flex justify-content-around">
               <div class="col-6 pr-2">
                 <button
                   type="button"
                   class="btn btn-outline-sparta btn-block"
-                  onclick="addCart()"
+                  onclick="addToCart(goodsId, $('#numberSelect').val(), function() { $('#cartModal').modal('show'); })"
                 >
                   장바구니
                 </button>
@@ -350,7 +213,7 @@
             <button
               type="button"
               class="btn btn-sparta"
-              onclick='window.location.href="/cart"'
+              onclick='window.location.href="/cart.html"'
             >
               장바구니
             </button>
@@ -358,5 +221,78 @@
         </div>
       </div>
     </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.js"
+      integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
+      integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <script src="/api.js"></script>
+    <script>
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const goodsId = urlParams.get("goodsId");
+      let goods;
+      let user;
+      getSelf(function (u) {
+        user = u;
+      });
+
+      $(document).ready(function () {
+        initAuthenticatePage();
+        bindSamePageViewerCountEvent(function (count) {
+          // NOTE: 나 포함인 값이라 항상 1명 초과일때만 메세지를 보여준다.
+          if (count > 1) {
+            $("#pageViewerCount").html(
+              `총 <b>${count}</b>명이 이 상품을 구경하고 있습니다!`
+            );
+          } else {
+            $("#pageViewerCount").html("");
+          }
+        });
+        getGoodsDetail(goodsId, function (g) {
+          goods = g;
+          renderItem(Number($("#numberSelect").val()));
+        });
+
+        $("#numberSelect").on("change", function () {
+          renderItem(Number($(this).val()));
+        });
+      });
+
+      function renderItem(orderNum) {
+        $("#orderNumber").html(
+          `<small class="mr-2 text-muted">총 수량 ${orderNum}개</small> $${(
+            orderNum * Number(goods.price)
+          ).toFixed(2)}`
+        );
+
+        $("#goodsUrl").attr("src", goods.thumbnailUrl);
+        $("#goodsName").text(goods.name);
+        $("#goodsPrice").text("$" + goods.price);
+      }
+
+      function buyNow() {
+        buyLocation([
+          {
+            goods,
+            quantity: Number($("#numberSelect").val()),
+          },
+        ]);
+      }
+    </script>
   </body>
 </html>

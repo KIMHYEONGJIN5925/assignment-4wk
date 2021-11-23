@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-
 const { Schema } = mongoose;
 const boardSchema = new Schema({
   boardId: {
@@ -21,7 +20,6 @@ const boardSchema = new Schema({
   content: {
     type: String
   }
-
 });
 
 module.exports = mongoose.model("Board", boardSchema); // 이 모델을 라우터에서 사용한다? 
