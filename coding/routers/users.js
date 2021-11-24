@@ -50,6 +50,7 @@ router.post("/users", async (req, res) => { // 포스트메소드, 경로는 /us
     }
 });
 
+// 로그인 POST
 const postAuthSchema = Joi.object({ //스키마정의하기
     nickname: Joi.string().alphanum().min(3).max(30).required(), 
     password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{4,30}$")).required(), 

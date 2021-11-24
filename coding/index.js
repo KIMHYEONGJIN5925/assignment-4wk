@@ -4,6 +4,7 @@ const port = 3000
 var bodyParser = require('body-parser')
 const boardRouter = require("./routers/board"); 
 const userRouter = require("./routers/users"); // 로긴회원가입
+const commentRouter = require("./routers/comments")
 app.use(express.json()) // 4주차 사용예정 
 app.use(express.urlencoded({extended: false}));//4주차 사용예정   2-4강
 app.use(bodyParser.json())
@@ -13,6 +14,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');  // 템플릿엔진 ejs를 이 웹의 뷰엔진으로 사용하겠다.
 app.use("/api", [boardRouter]);  //3-5강
 app.use("/api", [userRouter]);  // 로긴회원가입
+app.use("api", [commentRouter]); // 댓글라우터
 
 const connect = require('./schemas'); // 3-4강
 connect();
