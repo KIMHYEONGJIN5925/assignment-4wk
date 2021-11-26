@@ -3,23 +3,20 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const boardSchema = new Schema({
   boardId: {
-    type: Number
+    type: Number,
   },
   date: {
-    type: String
+    type: String,
   },
-  name: {
-    type: String
-  },
-  pass: {
-    type: String
+  nickname: {
+    type: String,
   },
   title: {
-    type: String
+    type: String,
   },
   content: {
-    type: String
-  }
+    type: String,
+  },
 });
 
-module.exports = mongoose.model("Board", boardSchema); // 이 모델을 라우터에서 사용한다? 
+module.exports = mongoose.model("Board", boardSchema); // 이 모델을 라우터에서 사용한다?

@@ -44,16 +44,29 @@
 
 
     <script>
+      function getSelf(callback) {
+        $.ajax({ 
+          type: "GET",
+          url: "/api/users/me",
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          success: function (response) {
+            callback(response.user);
+          },
+          error: function (xhr, status, error) {
+            if (status == 401) {
+              alert("로그인이 필요합니다.");
+            } else {
+              localStorage.clear();
+              alert("알 수 없는 문제가 발생했습니다. 관리자에게 문의하세요.");
+            }
+            window.location.href = "/login";
+          },
+        });
+}
 
       function fn_submit() { // 저장버튼 클릭하면 유효성검사 시작
-        if (document.frm.inputName.value == '') {
-            alert('작성자 입력해주세요.')
-            return false;
-        }
-        if (document.frm.inputPass.value == '') {
-            alert('비밀번호 입력해주세요.')
-            return false;
-        }
         if (document.frm.inputTitle.value == '') {
             alert('제목 입력해주세요.')
             return false;
@@ -69,26 +82,25 @@
       function saveBoard() {
 
       let today = new Date();
+      let boardId = Date.now();
       let year = today.getFullYear();
       let month = ('0' + (today.getMonth() + 1)).slice(-2);
       let day = ('0' + today.getDate()).slice(-2);
       let date = year + '-' + month  + '-' + day;
-      let boardId = Date.now()
-
         $.ajax({
           type: "POST",
           url: '/api/board',
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
           data: {
             date,
             boardId,
-            name: $("#inputName").val(),
-            pass: $("#inputPass").val(),
             title: $("#inputTitle").val(),                   
             content: $("#inputContent").val()
           },
 
           success: function(response) {
-            console.log(boardId)
             if (response["result"] == "success") {
               alert('게시완료!');
               window.location.href = "/home";
@@ -137,15 +149,6 @@
 
     </colgroup>
     <table>
-        <tr>
-            <th>작성자</th>
-            <td><input type='text' id='inputName' style="width:500px"></td>
-        </tr>
-        <tr>
-            <th>비밀번호</th>
-            <td><input type='password' id='inputPass' style="width:500px"></td>
-        </tr>
-        <tr>
             <th>제목</th>
             <td><input type='text' id='inputTitle' style="width:500px"></td>
         </tr>
@@ -157,7 +160,7 @@
     </table>
     <div class = 'button_div'>
         <button type='button' onclick='fn_submit();' > 저장하기 </button>
-        <button type='reset' onclick = 'window.location.href="/home"'> 취소 </button>
+        <button type='reset' onclick = 'window.location.href="/home"'> 취소</button>
     </div>
     </form>
 </body>

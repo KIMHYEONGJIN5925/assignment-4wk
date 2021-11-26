@@ -11,10 +11,10 @@ const UserSchema = new Schema({
 });
 
 UserSchema.virtual("userId").get(function () {
-    return this._id.toHexString();
-  });
-  UserSchema.set("toJSON", {
-    virtuals: true,
-  });
+  return this._id.toHexString();
+});
+UserSchema.set("toJSON", {
+  virtuals: true,
+});
 
 module.exports = mongoose.model("User", UserSchema);
